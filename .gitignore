@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+
+credentials.json
+token.pickle
+
+.env
+
+downloads/
+reports/
+
+*.log

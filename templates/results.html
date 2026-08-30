@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Check Mate - Results</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container results-container">
+
+    <h1>Plagiarism Results</h1>
+
+    <p class="subtitle">
+        AI-powered analysis of student submissions
+    </p>
+
+
+    {% if reports %}
+
+        <div class="summary">
+
+            <div class="summary-card">
+
+                <h3>Comparisons</h3>
+
+                <p>
+                    {{ reports|length }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% for report in reports %}
+
+        <div class="report">
+
+            <div class="report-header">
+
+                <h2>
+
+                    {{ report.student1 }}
+
+                    <span>↔</span>
+
+                    {{ report.student2 }}
+
+                </h2>
+
+
+                <span
+                    class="risk {{ report.risk|lower }}"
+                >
+
+                    {{ report.risk }}
+
+                </span>
+
+            </div>
+
+
+            <div class="score">
+
+                <span>
+                    Overall Similarity
+                </span>
+
+                <strong>
+
+                    {{ "%.1f"|format(
+                        report.final_score * 100
+                    ) }}%
+
+                </strong>
+
+            </div>
+
+
+            <div class="metrics">
+
+                <div>
+
+                    <span>
+                        TF-IDF
+                    </span>
+
+                    <strong>
+
+                        {{ "%.1f"|format(
+                            report.tfidf_similarity * 100
+                        ) }}%
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Semantic
+                    </span>
+
+                    <strong>
+
+                        {{ "%.1f"|format(
+                            report.semantic_similarity * 100
+                        ) }}%
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Matching Sentences
+                    </span>
+
+                    <strong>
+
+                        {{ report.matching_sentences }}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Exact Matches
+                    </span>
+
+                    <strong>
+
+                        {{ report.exact_matches }}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="evidence-button"
+                onclick="toggleEvidence(
+                    '{{ loop.index }}'
+                )"
+            >
+
+                View Evidence
+
+            </button>
+
+
+            <div
+                id="evidence-{{ loop.index }}"
+                class="evidence"
+                style="display:none;"
+            >
+
+                {% if report.evidence %}
+
+                    {% for evidence in report.evidence %}
+
+                    <div class="evidence-item">
+
+                        <div>
+
+                            <strong>
+                                Student 1
+                            </strong>
+
+                            <p>
+                                {{ evidence.sentence1 }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Student 2
+                            </strong>
+
+                            <p>
+                                {{ evidence.sentence2 }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="evidence-score">
+
+                            Similarity:
+
+                            <strong>
+
+                                {{ "%.1f"|format(
+                                    evidence.similarity * 100
+                                ) }}%
+
+                            </strong>
+
+
+                            {% if evidence.exact_match %}
+
+                                <span>
+                                    Exact Match
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Possible Paraphrase
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p>
+                        No sentence-level evidence found.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No reports available.
+        </p>
+
+    {% endif %}
+
+
+    <a
+        href="{{ url_for('dashboard') }}"
+        class="back"
+    >
+
+        ← Back to Dashboard
+
+    </a>
+
+</div>
+
+
+<script>
+
+function toggleEvidence(id) {
+
+    const element =
+        document.getElementById(
+            "evidence-" + id
+        );
+
+
+    if (element.style.display === "none") {
+
+        element.style.display = "block";
+
+    }
+
+    else {
+
+        element.style.display = "none";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

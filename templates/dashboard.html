@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Check Mate</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Check Mate</h1>
+
+        <p class="subtitle">
+            AI-Powered Plagiarism Detection
+        </p>
+
+
+        <form
+            action="{{ url_for('run_check') }}"
+            method="POST"
+        >
+
+            <!-- COURSE -->
+
+            <label>
+                Select Course
+            </label>
+
+            <select
+                name="course_id"
+                id="course"
+                required
+            >
+
+                <option value="">
+                    -- Select Course --
+                </option>
+
+                {% for course in courses %}
+
+                <option
+                    value="{{ course.id }}"
+                >
+
+                    {{ course.name }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- ASSIGNMENT -->
+
+            <label>
+                Select Assignment
+            </label>
+
+            <select
+                name="coursework_id"
+                id="assignment"
+                required
+                disabled
+            >
+
+                <option value="">
+                    -- Select Course First --
+                </option>
+
+            </select>
+
+
+            <button
+                type="submit"
+                id="runButton"
+                disabled
+            >
+
+                Run Plagiarism Check
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <script>
+
+        const courseSelect =
+            document.getElementById("course");
+
+        const assignmentSelect =
+            document.getElementById("assignment");
+
+        const runButton =
+            document.getElementById("runButton");
+
+
+        courseSelect.addEventListener(
+            "change",
+            async function() {
+
+                const courseId =
+                    this.value;
+
+
+                assignmentSelect.innerHTML =
+                    '<option>Loading...</option>';
+
+                assignmentSelect.disabled =
+                    true;
+
+                runButton.disabled =
+                    true;
+
+
+                if (!courseId) {
+
+                    assignmentSelect.innerHTML =
+                        '<option>-- Select Course First --</option>';
+
+                    return;
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/assignments/${courseId}`
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    assignmentSelect.innerHTML =
+                        '<option value="">-- Select Assignment --</option>';
+
+
+                    data.assignments.forEach(
+                        function(assignment) {
+
+                            const option =
+                                document.createElement(
+                                    "option"
+                                );
+
+                            option.value =
+                                assignment.id;
+
+                            option.textContent =
+                                assignment.title;
+
+                            assignmentSelect.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+
+                    assignmentSelect.disabled =
+                        false;
+
+                }
+
+                catch(error) {
+
+                    console.error(error);
+
+                    assignmentSelect.innerHTML =
+                        '<option>Error loading assignments</option>';
+
+                }
+
+            }
+        );
+
+
+        assignmentSelect.addEventListener(
+            "change",
+            function() {
+
+                runButton.disabled =
+                    !this.value;
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
