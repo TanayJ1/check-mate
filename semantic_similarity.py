@@ -2,12 +2,19 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = None
 
 
 def calculate_semantic_similarity(text1, text2):
 
-    embeddings = model.encode([text1, text2])
+    global model
+
+    if model is None:
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    embeddings = model.encode(
+        [text1, text2]
+    )
 
     similarity = cosine_similarity(
         [embeddings[0]],
@@ -27,6 +34,12 @@ if __name__ == "__main__":
     Artificial intelligence assists physicians in detecting medical conditions.
     """
 
-    score = calculate_semantic_similarity(text1, text2)
+    score = calculate_semantic_similarity(
+        text1,
+        text2
+    )
 
-    print("Semantic similarity:", score)
+    print(
+        "Semantic similarity:",
+        score
+    )
