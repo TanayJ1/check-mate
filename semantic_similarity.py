@@ -1,16 +1,9 @@
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-
-
-model = None
-
-
 def calculate_semantic_similarity(text1, text2):
 
-    global model
+    from sentence_transformers import SentenceTransformer
+    from sklearn.metrics.pairwise import cosine_similarity
 
-    if model is None:
-        model = SentenceTransformer("all-MiniLM-L6-v2")
+    model = SentenceTransformer("all-MiniLM-L6-v2")
 
     embeddings = model.encode(
         [text1, text2]
