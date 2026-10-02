@@ -9,7 +9,10 @@ class _Model:
     """Drop-in replacement exposing the same .encode() interface."""
 
     def __init__(self):
-        self._m = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
+        self._m = TextEmbedding(
+    "sentence-transformers/all-MiniLM-L6-v2",
+    cache_dir="models",
+)
 
     def encode(self, texts, **kwargs):
         single = isinstance(texts, str)
