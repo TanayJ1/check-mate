@@ -15,14 +15,17 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly"
 ]
 
+def _secret_path(name):
+    path = f"/etc/secrets/{name}"
+    return path if os.path.exists(path) else name
+
 def get_classroom_service():
-
-    creds = None
-
-    if os.path.exists("token.pickle"):
-
-        with open("token.pickle", "rb") as token:
-            creds = pickle.load(token)
+    creds = Credentials.from_authorized_user_file(
+        _secret_path("token.json"), SCOPES
+    )
+    if creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+    return build("classroom", "v1", credentials=creds)
 
     if not creds or not creds.valid:
 
