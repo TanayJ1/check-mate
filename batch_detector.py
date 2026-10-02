@@ -1,10 +1,8 @@
 from pathlib import Path
 
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from semantic_similarity import get_model
 
 
 def load_submissions(folder):
@@ -32,10 +30,7 @@ def generate_embeddings(submissions):
 
     texts = list(submissions.values())
 
-    embeddings = model.encode(
-        texts,
-        show_progress_bar=True
-    )
+    embeddings = get_model().encode(texts)
 
     return student_ids, embeddings
 

@@ -1,9 +1,7 @@
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import re
 
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from semantic_similarity import get_model
 
 
 def split_into_sentences(text):
@@ -57,6 +55,10 @@ def find_sentence_matches(
     sentences1 = split_into_sentences(text1)
     sentences2 = split_into_sentences(text2)
 
+    if not sentences1 or not sentences2:
+        return []
+
+    model = get_model()
     embeddings1 = model.encode(sentences1)
     embeddings2 = model.encode(sentences2)
 
