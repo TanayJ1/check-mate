@@ -4,21 +4,20 @@ import numpy as np
 from fastembed import TextEmbedding
 from sklearn.metrics.pairwise import cosine_similarity
 
-
 class _Model:
-    """Drop-in replacement exposing the same .encode() interface."""
-
     def __init__(self):
         self._m = TextEmbedding(
-    "sentence-transformers/all-MiniLM-L6-v2",
-    cache_dir="models",
-)
+            "sentence-transformers/all-MiniLM-L6-v2",
+            cache_dir="models",
+            threads=1,
+        )
 
     def encode(self, texts, **kwargs):
         single = isinstance(texts, str)
         if single:
             texts = [texts]
-        out = np.array(list(self._m.embed(texts)))
+        texts = [t[:3000] for t in texts]  # cap very long inputs
+        out = np.array(list(self._m.embed(texts, batch_size=8)))
         return out[0] if single else out
 
 
